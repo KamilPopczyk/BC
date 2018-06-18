@@ -3,6 +3,7 @@ import urllib.request
 from contextlib import closing
 import socket
 import os
+import sys
 
 
 class ButtonCounter(HTMLParser):
@@ -106,22 +107,19 @@ def save_to_file(file_name, websites_list):
 
 
 def main():
-    websites_list = load_file('files_with_websites')
-    websites_list_counted = []
-    for site in websites_list:
-        counter = WebsiteCounter()
-        counter.load_website(site)
-        counter.count_buttons()
-        websites_list_counted.append(counter.give_info())
+    arguments = sys.argv
+    if len(arguments) < 2:
+        print("Not enough arguments ! ")
+    else:
+        websites_list = load_file(arguments[1])
+        websites_list_counted = []
+        for site in websites_list:
+            counter = WebsiteCounter()
+            counter.load_website(site)
+            counter.count_buttons()
+            websites_list_counted.append(counter.give_info())
 
-    save_to_file('coun.csv', websites_list_counted)
-    for s in websites_list_counted:
-        print(s[0] + ',' + s[1])
-
-    # cou = WebsiteCounter()
-    # cou.load_website('localhost') # poprawic localhost ! www.boredbutton.com
-    # cou.count_buttons()
-
+        save_to_file(arguments[2], websites_list_counted)
 
 if __name__ == '__main__':
     main()
