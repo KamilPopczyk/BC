@@ -23,8 +23,9 @@ class ButtonCounter(HTMLParser):
         if tag == 'a':          # html tag <a> with class which contains keywords: btn, button
             for attr in attrs:
                 if attr[0] == 'class':
-                    if attr[1].lower().find('btt') >= 0 or attr[1].lower().find('button') >= 0:
+                    if attr[1].lower().find('btn') >= 0 or attr[1].lower().find('button') >= 0:
                         self.button_sum = self.button_sum + 1
+
 
 
 class WebsiteCounter:
@@ -36,8 +37,15 @@ class WebsiteCounter:
     def load_website(self, url):
         """Function responsible for download website's html"""
         if url is 'localhost':
-            localhost = urllib.urlopen("http://localhost:8280/")
-            print(localhost.read(100))
+            try:
+                with urllib.request.urlopen('http://localhost:8080/') as response:
+                    self.html_response = str(response.read())
+            except urllib.request.HTTPError:
+                print("Can't download website.")
+                return False
+            except:
+                print("Something wrong with website.")
+                return False
 
         else:
             if not ('https://' or 'http://') in url:
@@ -59,7 +67,7 @@ class WebsiteCounter:
 
 def main():
     cou = WebsiteCounter()
-    cou.load_website('www.boredbutton.com') # poprawic localhost ! www.boredbutton.com
+    cou.load_website('localhost') # poprawic localhost ! www.boredbutton.com
     cou.count_buttons()
 
 
