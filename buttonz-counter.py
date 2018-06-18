@@ -67,7 +67,7 @@ class WebsiteCounter:
                 with urllib.request.urlopen(url) as response:
                     self.html_response = str(response.read())
             except urllib.request.HTTPError:
-                print("Can't download website.")
+                print("Can't download website: " + url)
                 return False
             except:
                 print("Something wrong with website.")
