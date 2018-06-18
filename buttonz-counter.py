@@ -97,8 +97,8 @@ def load_file(file_name):
 
 
 def save_to_file(file_name, websites_list):
-    """Save countes buttons to file"""
-    with open(file_name) as file:
+    """Save counted buttons to file"""
+    with open(file_name, 'w+') as file:
         file.write('address,number_of_buttons ' + '\n')
         for site in websites_list:
             file.write(site[0] + ',' + site[1] + '\n')
@@ -109,12 +109,12 @@ def main():
     websites_list = load_file('files_with_websites')
     websites_list_counted = []
     for site in websites_list:
-        print(site)
         counter = WebsiteCounter()
         counter.load_website(site)
         counter.count_buttons()
         websites_list_counted.append(counter.give_info())
 
+    save_to_file('coun.csv', websites_list_counted)
     for s in websites_list_counted:
         print(s[0] + ',' + s[1])
 
