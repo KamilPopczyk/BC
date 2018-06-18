@@ -108,18 +108,23 @@ def save_to_file(file_name, websites_list):
 
 def main():
     arguments = sys.argv
-    if len(arguments) < 2:
+    if len(arguments) < 3:
         print("Not enough arguments ! ")
     else:
-        websites_list = load_file(arguments[1])
         websites_list_counted = []
-        for site in websites_list:
-            counter = WebsiteCounter()
-            counter.load_website(site)
-            counter.count_buttons()
-            websites_list_counted.append(counter.give_info())
+        websites_list = load_file(arguments[1])
+        if websites_list is False:
+            print("Error, check file to load ")
+        else:
+            for site in websites_list:
+                counter = WebsiteCounter()
+                counter.load_website(site)
+                counter.count_buttons()
+                websites_list_counted.append(counter.give_info())
 
-        save_to_file(arguments[2], websites_list_counted)
+            save_to_file(arguments[2], websites_list_counted)
+            print("Success")
+
 
 if __name__ == '__main__':
     main()
