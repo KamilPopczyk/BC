@@ -45,19 +45,20 @@ class WebsiteCounter:
         """Function responsible for download website's html"""
         if url == 'localhost':                        # I'm not sure is that what you expect
             self.__url = 'localhost'
-            locahost_url = 'http://localhost:'        # example: http://localhost:8080/'
+            localhost_url = 'http://localhost:'        # example: http://localhost:8080/'
             used_port = 0
             for port in range(8000, 8081):            # Let's find used port , range is short because of speed
                 with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
                     res = sock.connect_ex(('localhost', port))
                     if res == 0:
                         used_port = port
-            url = locahost_url + str(used_port) + '/'
+            url = localhost_url + str(used_port) + '/'
 
         else:
             self.__url = url                            # save url
         # end if localhost
-        if not ('https://' or 'http://') in url:
+
+        if url.find('https://') and url.find('http://') < 0:
             url = 'http://' + url
         try:
             with urllib.request.urlopen(url) as response:
