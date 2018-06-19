@@ -30,7 +30,7 @@ class ButtonCounter(HTMLParser):
                 if attr[0] == 'class':
                     if attr[1].lower().find('btn') >= 0 or attr[1].lower().find('button') >= 0:
                         self.button_sum = self.button_sum + 1
-
+# End ButtonCounter class
 
 class WebsiteCounter:
     """Class website counter"""
@@ -79,7 +79,7 @@ class WebsiteCounter:
     def give_info(self):                               # return info , url and buttons sum
         """Give url and button sum"""
         return [str(self.__url), str(self.__button_sum)]
-
+# End WebsiteCounter class
 
 def load_file(file_name):
     """Load file with websites"""
