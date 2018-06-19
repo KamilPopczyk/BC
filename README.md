@@ -1,4 +1,4 @@
-# Task12
+# Task2
 
 Solution of Task2 - Buttonz Counter
 
@@ -19,7 +19,7 @@ Python 3.6
 In commandline:
 
 ```
-sprint-planning-helper.py file_with_websites file_to_save.csv
+python3 buttonz-counter.py file_with_websites file_to_save.csv
 ```
 
 ## Tests
