@@ -4,6 +4,7 @@ from contextlib import closing
 import socket
 import os
 import sys
+from pathlib import Path
 
 
 class ButtonCounter(HTMLParser):
@@ -33,53 +34,51 @@ class ButtonCounter(HTMLParser):
 
 class WebsiteCounter:
     """Class website counter"""
-    def __init__(self):
-        self.button_sum = 0
-        self.html_response = ""
-        self.url = ""
+    __button_sum = 0
+    __html_response = ""
+    __url = ""
 
-    def load_website(self, url):
+    def __init__(self, url):
+        self.__load_website(url)
+
+    def __load_website(self, url):
         """Function responsible for download website's html"""
-        if url == 'localhost':
-            self.url = 'localhost'
-            locahost_url = 'http://localhost:'     # example: http://localhost:8080/'
+        if url == 'localhost':                        # I'm not sure is that what you expect
+            self.__url = 'localhost'
+            locahost_url = 'http://localhost:'        # example: http://localhost:8080/'
             used_port = 0
-            for port in range(8000, 8081):            # Let's find used port
+            for port in range(8000, 8081):            # Let's find used port , range is short because of speed
                 with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
                     res = sock.connect_ex(('localhost', port))
                     if res == 0:
                         used_port = port
+            url = locahost_url + str(used_port) + '/'
 
-            try:
-                with urllib.request.urlopen(locahost_url + str(used_port) + '/') as response:
-                    self.html_response = str(response.read())
-            except urllib.request.HTTPError:
-                print("Can't download website.")
-                return False
-            except:
-                print("Unused port: " + str(port))
-        # end if localhost
         else:
-            self.url = url
-            if not ('https://' or 'http://') in url:
-                url = 'https://' + url
-            try:
-                with urllib.request.urlopen(url) as response:
-                    self.html_response = str(response.read())
-            except urllib.request.HTTPError:
-                print("Can't download website: " + url)
-                return False
-            except:
-                print("Something wrong with website.")
-                return False
-
-    def give_info(self):        # return info , url and buttons sum
-        return [str(self.url), str(self.button_sum)]
+            self.__url = url                            # save url
+        # end if localhost
+        if not ('https://' or 'http://') in url:
+            url = 'http://' + url
+        try:
+            with urllib.request.urlopen(url) as response:
+                self.__html_response = str(response.read())
+        except urllib.request.HTTPError:
+            print("Can't download website: " + url)
+            return False
+        except:
+            print("Something wrong with website.")
+            return False
 
     def count_buttons(self):
-        html_parser = ButtonCounter()
-        html_parser.feed(self.html_response)
-        self.button_sum = html_parser.button_sum
+        """Count button on downloaded website"""
+        button_counter = ButtonCounter()
+        button_counter.feed(self.__html_response)
+        self.__button_sum = button_counter.button_sum
+
+    @property
+    def give_info(self):                               # return info , url and buttons sum
+        """Give url and button sum"""
+        return [str(self.__url), str(self.__button_sum)]
 
 
 def load_file(file_name):
@@ -99,11 +98,16 @@ def load_file(file_name):
 
 def save_to_file(file_name, websites_list):
     """Save counted buttons to file"""
-    with open(file_name, 'w+') as file:
-        file.write('address,number_of_buttons ' + '\n')
-        for site in websites_list:
-            file.write(site[0] + ',' + site[1] + '\n')
-    file.closed
+    file_path = Path(file_name)
+    if not file_path.exists():                      # safety first
+        with open(file_name, 'w+') as file:
+            file.write('address,number_of_buttons ' + '\n')
+            for site in websites_list:
+                file.write(site[0] + ',' + site[1] + '\n')
+        file.closed
+    else:
+        print("Error, file " + "'" + file_name + "'" + " already exists ")
+        return False
 
 
 def main():
@@ -111,19 +115,18 @@ def main():
     if len(arguments) < 3:
         print("Not enough arguments ! ")
     else:
-        websites_list_counted = []
-        websites_list = load_file(arguments[1])
+        websites_list_counted = []                  # save counted websites
+        websites_list = load_file(arguments[1])     # websites from file
         if websites_list is False:
             print("Error, check file to load ")
         else:
-            for site in websites_list:
-                counter = WebsiteCounter()
-                counter.load_website(site)
+            for site in websites_list:              # count buttons loop
+                counter = WebsiteCounter(site)
                 counter.count_buttons()
-                websites_list_counted.append(counter.give_info())
+                websites_list_counted.append(counter.give_info)
 
-            save_to_file(arguments[2], websites_list_counted)
-            print("Success")
+            if not save_to_file(arguments[2], websites_list_counted) is False:
+                print("Success")
 
 
 if __name__ == '__main__':
