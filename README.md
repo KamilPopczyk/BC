@@ -1,6 +1,4 @@
-# Task2
-
-Solution of Task2 - Buttonz Counter
+# Count buttons on website
 
 ## Getting Started
 
