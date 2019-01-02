@@ -43,7 +43,7 @@ class WebsiteCounter:
 
     def __load_website(self, url):
         """Function responsible for download website's html"""
-        if url == 'localhost':                        # I'm not sure is that what you expect
+        if url == 'localhost':                        
             self.__url = 'localhost'
             localhost_url = 'http://localhost:'        # example: http://localhost:8080/'
             used_port = 0
